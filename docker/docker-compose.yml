@@ -1,0 +1,51 @@
+version: '3.8'
+
+name: mvp-store-payment-service
+
+services:
+  nginx:
+    container_name: store_payment_nginx
+    build:
+      context: nginx
+      dockerfile: Dockerfile
+    volumes:
+      - ../:/var/www/store
+    ports:
+      - "8182:80"
+    depends_on:
+      - php-fpm
+    networks:
+      - mvp-store
+
+  php-fpm:
+    container_name: store_payment_php-fpm
+    build:
+      context: php-fpm
+      dockerfile: Dockerfile
+    volumes:
+      - ../:/var/www/store
+    depends_on:
+      - database
+    networks:
+      - mvp-store
+
+  database:
+    container_name: store_payment_database
+    image: postgres:15.1-alpine
+    volumes:
+      - payment_service_database:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: payment_user
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: store_payment
+    ports:
+      - "5433:5432"
+    networks:
+      - mvp-store
+
+volumes:
+  payment_service_database:
+
+networks:
+  mvp-store:
+    external: true
