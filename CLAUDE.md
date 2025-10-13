@@ -33,10 +33,10 @@ make network-remove         # Remove shared Docker network
 make test
 
 # Run tests inside container manually
-docker exec -it store_payment_php-fpm php bin/phpunit
+docker exec -it mvp-store-payment php bin/phpunit
 
 # Run specific test file
-docker exec -it store_payment_php-fpm php bin/phpunit tests/SomeTest.php
+docker exec -it mvp-store-payment php bin/phpunit tests/SomeTest.php
 ```
 
 ### Database Operations (inside container)
@@ -53,32 +53,32 @@ php bin/console doctrine:schema:validate       # Validate schema consistency
 ## Service Architecture
 
 ### Container Structure
-- **Nginx** (`store_payment_nginx`): Web server on port 8182
-- **PHP-FPM** (`store_payment_php-fpm`): PHP application server
-- **PostgreSQL** (`store_payment_database`): Database on port 5433
+- **Payment Container** (`mvp-store-payment`): Nginx + PHP-FPM on port 8192
+- **PostgreSQL** (`mvp-store-payment-postgres-local`): Database on port 5442
 
 ### Database Configuration
 - **Database**: `store_payment`
-- **User**: `payment_user`
-- **Password**: `secret`
-- **Port**: 5433 (external), 5432 (internal)
+- **User**: `mvp_user`
+- **Password**: `mvp_secret`
+- **Port**: 5442 (external), 5432 (internal)
 
 ### API Endpoints
 - **Health Check**: `GET /api/health`
-- **Base URL**: http://localhost:8182
+- **Base URL**: http://localhost:8192
 - **API Prefix**: `/api`
 
 ### Inter-Service Communication
-- **Docker Network**: `mvp-store` (shared with other services)
-- **Internal Service Name**: `store_payment_nginx`
-- **External Access**: http://localhost:8182
+- **Docker Network**: `mvp_store_network` (shared with other services)
+- **Internal Service Name**: `mvp-store-payment` (accessible at `http://mvp-store-payment:8080`)
+- **External Access**: http://localhost:8192
+- **Backend calls this service at**: `http://mvp-store-payment:8080`
 
 ## Development Workflow
 
 ### Local Development Setup
 1. Ensure shared network exists: `make network-create`
 2. Initialize service: `make init`
-3. Access at: http://localhost:8182
+3. Access at: http://localhost:8192
 
 ### Adding New Features
 1. Create controller in `src/Controller/`

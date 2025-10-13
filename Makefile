@@ -4,7 +4,7 @@
 
 init: network-create docker-build up run-app
 	@echo "✅ Payment service initialized successfully!"
-	@echo "🌐 Service available at: http://localhost:8182 (direct) or http://localhost/api/payment (via gateway)"
+	@echo "🌐 Service available at: http://localhost:8192 (direct) or http://localhost:8090/api/payment (via gateway)"
 
 up:
 	docker-compose -f docker/docker-compose.yml up -d
@@ -25,8 +25,8 @@ test:
 	docker exec -it mvp-store-payment php bin/phpunit
 
 docker-build:
-	#docker-compose -f docker/docker-compose.yml build --no-cache
-	docker-compose -f docker/docker-compose.yml build
+	docker-compose -f docker/docker-compose.yml build --no-cache
+	#docker-compose -f docker/docker-compose.yml build
 
 clean: down
 	docker-compose -f docker/docker-compose.yml down -v --remove-orphans

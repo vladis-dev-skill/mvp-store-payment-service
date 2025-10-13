@@ -7,7 +7,7 @@ services:
       context: ..
       dockerfile: docker/Dockerfile
     ports:
-      - "8182:8080"  # External port for direct access (dev)
+      - "8192:8080"  # External port for direct access (dev)
     volumes:
       - ../:/var/www/store
     networks:
@@ -21,13 +21,11 @@ services:
       POSTGRES_USER: mvp_user
       POSTGRES_PASSWORD: mvp_secret
     ports:
-      - "5433:5432"
+      - "5442:5432"
     volumes:
       - payment_postgres_local:/var/lib/postgresql/data
     networks:
       - mvp_store_network
-    profiles:
-      - local-dev  # Only start with specific profile
 
 volumes:
   payment_postgres_local:
