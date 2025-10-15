@@ -1,10 +1,8 @@
-.PHONY: init up down restart status logs exec_bash test clean network-create
-
 # MVP Store Payment Service Commands
 
 init: network-create docker-build up run-app
-	@echo "✅ Payment service initialized successfully!"
-	@echo "🌐 Service available at: http://localhost:8192 (direct) or http://localhost:8090/api/payment (via gateway)"
+	@echo "Payment service initialized successfully!"
+	@echo "Service available at: http://localhost:8192 (direct) or http://localhost:8090/api/payment (via gateway)"
 
 up:
 	docker-compose -f docker/docker-compose.yml up -d
@@ -21,7 +19,7 @@ exec_bash:
 	docker exec -it mvp-store-payment sh
 
 test:
-	@echo "🧪 Running payment tests..."
+	@echo "Running payment tests..."
 	docker exec -it mvp-store-payment php bin/phpunit
 
 docker-build:
@@ -30,11 +28,11 @@ docker-build:
 
 clean: down
 	docker-compose -f docker/docker-compose.yml down -v --remove-orphans
-	docker image rm mvp-store-payment-service_payment 2>/dev/null || true
+	docker image rm mvp-store-payment-service_payment
 
 # Application management
 run-app: composer-install payment-migrate
-	@echo "✅ Application setup completed"
+	@echo "Application setup completed"
 
 composer-install:
 	docker exec -it mvp-store-payment composer install --optimize-autoloader
@@ -46,14 +44,10 @@ payment-fixture:
 	docker exec -it mvp-store-payment php bin/console doctrine:fixtures:load --no-interaction
 
 fixer:
-	@echo "🎨 Fixing code style..."
+	@echo "Fixing code style..."
 	docker exec -it mvp-store-payment tools/php-cs-fixer/vendor/bin/php-cs-fixer fix src
 
 # Network management
 network-create:
-	@echo "🌐 Creating shared network..."
-	@docker network create mvp_store_network 2>/dev/null || echo "Network already exists"
-
-network-remove:
-	@echo "🗑️  Removing shared network..."
-	@docker network rm mvp_store_network 2>/dev/null || echo "Network not found"
+	@echo "Creating shared network..."
+	@docker network create mvp_store_network || echo "Network already exists"
